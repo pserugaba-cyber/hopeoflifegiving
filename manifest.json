@@ -1,0 +1,30 @@
+{
+  "name": "Hope of Life International Church",
+  "short_name": "HOLI Give",
+  "description": "Secure online giving for Hope of Life International Church",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#bf0a0a",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "lifestyle"],
+  "icons": [
+    {
+      "src": "images/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "images/holi_logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/holi_logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
