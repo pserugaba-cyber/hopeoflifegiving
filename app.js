@@ -6,14 +6,25 @@
   const translations = {
     en: {
       churchName: 'Hope of Life International Church',
-      heroCopy: 'Support the work of Hope of Life through tithes, offerings, missions, and the building fund.',
+      heroCopy: 'A simple, secure way to give from your phone.',
+      heroChipOne: 'Simple steps',
+      heroChipTwo: 'Secure payment',
+      heroChipThree: 'Receipt by email',
       scripture: "Rejoice always, pray continually, give thanks in all circumstances; for this is God's will for you in Christ Jesus.",
       scriptureRef: '1 Thessalonians 5:16-18',
       cardKicker: 'Online Giving',
-      cardTitle: 'Choose your gift',
-      cardCopy: 'Give securely in just a few steps.',
+      cardTitle: 'Give',
+      cardCopy: 'Tap an amount, choose a fund, and continue.',
+      stepOneTitle: 'Choose a fund',
+      stepOneCopy: 'Pick where you want your gift to go.',
+      stepTwoTitle: 'Enter an amount',
+      stepTwoCopy: 'Use a quick amount or type your own gift.',
+      stepThreeTitle: 'Pay securely',
+      stepThreeCopy: 'Card checkout is always available, with wallets when supported.',
       amountLabel: 'Amount',
+      amountPanelLabel: 'Tap amount',
       amountHelp: 'Minimum $1.00',
+      amountClear: 'Clear',
       amountError: 'Enter a valid amount between $1 and $10,000.',
       amountPlaceholder: '0.00',
       fundLabel: 'Fund',
@@ -36,8 +47,12 @@
       emailError: 'Enter a valid email address.',
       summaryLabel: 'Gift summary',
       summaryPending: 'Choose an amount',
-      continueLabel: 'Continue with',
+      continueLabel: 'Give',
       finePrint: 'Your gift is processed securely, and a receipt can be sent to your email.',
+      trustCard: 'Card',
+      trustGooglePay: 'Google Pay',
+      trustCashApp: 'Cash App',
+      trustApplePay: 'Apple Pay',
       checkoutLoading: 'Preparing secure checkout...',
       checkoutUnavailableConfig: 'Online giving is not configured yet. Add your Square application ID, location ID, and access token on the server.',
       checkoutUnavailableSecure: 'Secure checkout needs HTTPS. For local testing, open this site with http://localhost instead of a raw IP address.',
@@ -45,6 +60,7 @@
       checkoutUnavailableTemporary: 'Secure checkout is temporarily unavailable. Please try again in a moment.',
       paymentEyebrow: 'Secure checkout',
       paymentTitle: 'Secure Payment',
+      walletGuide: 'Apple Pay appears only on supported Safari devices on your live HTTPS site. Google Pay and Cash App appear when available.',
       sheetFund: 'Fund',
       sheetTotal: 'Total',
       tabCards: 'Cards',
@@ -73,14 +89,16 @@
     },
     rw: {
       churchName: 'Hope of Life International Church',
-      heroCopy: 'Shyigikira umurimo wacu binyuze mu icyacumi, amaturo, ubutumwa n ikigega cyo kubaka.',
+      heroCopy: 'Uburyo bworoshye kandi bwizewe bwo gutanga ukoresheje telefone yawe.',
       scripture: 'Mwishime iminsi yose, musenge ubudasiba, mushime mu byerekeye byose; kuko ari ko Imana ibashakira muri Kristo Yesu.',
       scriptureRef: '1 Abatesalonika 5:16-18',
       cardKicker: 'Gutanga Online',
-      cardTitle: 'Hitamo impano yawe',
-      cardCopy: 'Uburyo bworoshye, bwihuse kandi bwizewe bwo gutanga.',
+      cardTitle: 'Tanga',
+      cardCopy: 'Kanda amafaranga, hitamo ikigega, hanyuma ukomeze.',
       amountLabel: 'Amafaranga',
+      amountPanelLabel: 'Kanda amafaranga',
       amountHelp: 'Make ni $1.00',
+      amountClear: 'Siba',
       amountError: 'Shyiramo amafaranga yemewe hagati ya $1 na $10,000.',
       amountPlaceholder: '0.00',
       fundLabel: 'Ikigega',
@@ -103,7 +121,7 @@
       emailError: 'Andika email yemewe.',
       summaryLabel: 'Incamake y impano',
       summaryPending: 'Hitamo amafaranga',
-      continueLabel: 'Komeza na',
+      continueLabel: 'Tanga',
       finePrint: 'Bifite umutekano kandi birafunze. Receipt ishobora koherezwa kuri email yawe.',
       paymentEyebrow: 'Kwishyura mu mutekano',
       paymentTitle: 'Kwishyura',
@@ -135,14 +153,16 @@
     },
     fr: {
       churchName: 'Hope of Life International Church',
-      heroCopy: 'Soutenez notre ministere par la dime, les offrandes, les missions et le fonds de construction.',
+      heroCopy: 'Une facon simple et sure de donner depuis votre telephone.',
       scripture: "Soyez toujours joyeux, priez sans cesse, rendez grace en toute circonstance; c est la volonte de Dieu pour vous en Jesus-Christ.",
       scriptureRef: '1 Thessaloniciens 5:16-18',
       cardKicker: 'Don En Ligne',
-      cardTitle: 'Choisissez votre don',
-      cardCopy: 'Un parcours simple, rapide et securise pour donner.',
+      cardTitle: 'Donner',
+      cardCopy: 'Touchez un montant, choisissez un fonds, puis continuez.',
       amountLabel: 'Montant',
+      amountPanelLabel: 'Touchez le montant',
       amountHelp: 'Minimum 1 $',
+      amountClear: 'Effacer',
       amountError: 'Entrez un montant valide entre 1 $ et 10 000 $.',
       amountPlaceholder: '0.00',
       fundLabel: 'Fonds',
@@ -165,7 +185,7 @@
       emailError: 'Entrez une adresse email valide.',
       summaryLabel: 'Resume du don',
       summaryPending: 'Choisissez un montant',
-      continueLabel: 'Continuer avec',
+      continueLabel: 'Donner',
       finePrint: 'Securise et chiffre. Un recu peut etre envoye a votre email.',
       paymentEyebrow: 'Paiement securise',
       paymentTitle: 'Paiement',
@@ -197,7 +217,6 @@
     }
   };
 
-  const presetAmounts = [10, 20, 50, 100, 250];
   const localeMap = {
     en: 'en-US',
     rw: 'en-US',
@@ -227,6 +246,7 @@
     lang: initialLang,
     fund: 'offering',
     amount: 50,
+    amountRaw: '50',
     activeTab: 'card',
     paymentStatus: 'loading',
     paymentMessageKey: 'checkoutLoading',
@@ -239,7 +259,9 @@
     touched: { amount: false, name: false, email: false }
   };
 
-  const amountInput = document.getElementById('amountInput');
+  const amountPanel = document.getElementById('amountPanel');
+  const amountDisplay = document.getElementById('amountDisplay');
+  const amountClearBtn = document.getElementById('amountClearBtn');
   const amountError = document.getElementById('amountError');
   const nameInput = document.getElementById('nameInput');
   const nameError = document.getElementById('nameError');
@@ -297,29 +319,60 @@
     return normalized === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
   }
 
-  function sanitizeAmount(value) {
-    const cleaned = value.replace(/[^0-9.]/g, '');
-    const parts = cleaned.split('.');
-    if (parts.length === 1) {
-      return parts[0];
-    }
-    return parts[0] + '.' + parts.slice(1).join('').slice(0, 2);
-  }
-
   function parseAmountValue() {
-    const parsed = parseFloat((amountInput.value || '').replace(/,/g, ''));
+    const parsed = parseFloat(state.amountRaw || '0');
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  function setErrorState(input, errorEl, invalid, showError) {
+  function setTextErrorState(input, errorEl, invalid, showError) {
     input.classList.toggle('is-invalid', invalid && showError);
     errorEl.classList.toggle('visible', invalid && showError);
   }
 
-  function setActiveChip(value) {
-    document.querySelectorAll('.chip').forEach((chip) => {
-      chip.classList.toggle('is-active', chip.dataset.amount === value);
-    });
+  function setAmountErrorState(invalid, showError) {
+    amountPanel.classList.toggle('is-invalid', invalid && showError);
+    amountError.classList.toggle('visible', invalid && showError);
+    amountPanel.setAttribute('aria-invalid', invalid && showError ? 'true' : 'false');
+  }
+
+  function formatAmountDisplayValue() {
+    return state.amountRaw || '0';
+  }
+
+  function syncAmountDisplay() {
+    amountDisplay.textContent = formatAmountDisplayValue();
+  }
+
+  function appendAmountValue(value) {
+    const current = state.amountRaw || '0';
+
+    if (value === '.') {
+      if (current.includes('.')) {
+        return;
+      }
+      state.amountRaw = current + '.';
+      return;
+    }
+
+    if (current.includes('.')) {
+      const decimals = current.split('.')[1] || '';
+      if (decimals.length >= 2) {
+        return;
+      }
+      state.amountRaw = current + value;
+      return;
+    }
+
+    state.amountRaw = current === '0' ? value : current + value;
+  }
+
+  function backspaceAmountValue() {
+    const next = (state.amountRaw || '').slice(0, -1);
+    state.amountRaw = next ? next : '0';
+  }
+
+  function clearAmountValue() {
+    state.amountRaw = '0';
   }
 
   function setFund(fund) {
@@ -369,9 +422,10 @@
 
     state.amount = parsedAmount;
 
-    setErrorState(amountInput, amountError, !amountValid, ui.mainSubmitted || ui.touched.amount);
-    setErrorState(nameInput, nameError, !nameValid, ui.mainSubmitted || ui.touched.name);
-    setErrorState(emailInput, emailError, !emailValid, ui.mainSubmitted || ui.touched.email);
+    syncAmountDisplay();
+    setAmountErrorState(!amountValid, ui.mainSubmitted || ui.touched.amount);
+    setTextErrorState(nameInput, nameError, !nameValid, ui.mainSubmitted || ui.touched.name);
+    setTextErrorState(emailInput, emailError, !emailValid, ui.mainSubmitted || ui.touched.email);
 
     const amountLabel = amountValid ? formatCurrency(parsedAmount) : t('summaryPending');
     const fundLabel = getFundLabel(state.fund);
@@ -637,38 +691,29 @@
   }
 
 
-  document.querySelectorAll('.chip').forEach((button) => {
+  document.querySelectorAll('[data-pad-value]').forEach((button) => {
     button.addEventListener('click', () => {
-      const value = button.dataset.amount;
-      state.amount = Number(value);
-      amountInput.value = state.amount.toFixed(2);
       ui.touched.amount = true;
-      setActiveChip(value);
+      appendAmountValue(button.dataset.padValue);
       updateMainState();
     });
   });
 
-  amountInput.addEventListener('input', () => {
-    ui.touched.amount = true;
-    amountInput.value = sanitizeAmount(amountInput.value);
-    const parsed = parseAmountValue();
-    state.amount = parsed;
+  document.querySelectorAll('[data-pad-action]').forEach((button) => {
+    button.addEventListener('click', () => {
+      ui.touched.amount = true;
 
-    if (presetAmounts.includes(parsed)) {
-      setActiveChip(String(parsed));
-    } else {
-      setActiveChip('');
-    }
+      if (button.dataset.padAction === 'backspace') {
+        backspaceAmountValue();
+      }
 
-    updateMainState();
+      updateMainState();
+    });
   });
 
-  amountInput.addEventListener('blur', () => {
+  amountClearBtn.addEventListener('click', () => {
     ui.touched.amount = true;
-    const parsed = parseAmountValue();
-    if (parsed > 0) {
-      amountInput.value = parsed.toFixed(2);
-    }
+    clearAmountValue();
     updateMainState();
   });
 
@@ -731,8 +776,6 @@
   }
 
   langSelect.value = state.lang;
-  amountInput.value = state.amount.toFixed(2);
-  setActiveChip('50');
   setFund(state.fund);
   applyTranslations();
 

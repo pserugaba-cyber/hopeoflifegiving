@@ -66,31 +66,37 @@
         </div>
 
         <form id="donationForm" novalidate>
-          <div class="field">
+          <div class="field amount-field">
             <div class="label-row">
-              <label class="section-label" for="amountInput" data-i18n="amountLabel">Amount</label>
+              <label class="section-label" for="amountPad" data-i18n="amountLabel">Amount</label>
               <span class="field-note inline-note" data-i18n="amountHelp">Minimum $1.00</span>
             </div>
 
-            <div class="chip-row" role="group" aria-label="Preset amounts">
-              <button type="button" class="chip" data-amount="10">$10</button>
-              <button type="button" class="chip" data-amount="20">$20</button>
-              <button type="button" class="chip is-active" data-amount="50">$50</button>
-              <button type="button" class="chip" data-amount="100">$100</button>
-              <button type="button" class="chip" data-amount="250">$250</button>
-            </div>
+            <div id="amountPanel" class="amount-panel">
+              <div class="amount-panel-head">
+                <p class="amount-panel-label" data-i18n="amountPanelLabel">Tap amount</p>
+                <button id="amountClearBtn" class="amount-clear" type="button" data-i18n="amountClear">Clear</button>
+              </div>
 
-            <div class="amount-wrap">
-              <span class="currency-prefix">$</span>
-              <input
-                id="amountInput"
-                class="amount-input"
-                type="text"
-                inputmode="decimal"
-                autocomplete="off"
-                data-i18n-placeholder="amountPlaceholder"
-                placeholder="0.00"
-              />
+              <div id="amountScreen" class="amount-screen" aria-live="polite" aria-label="Donation amount">
+                <span class="amount-currency">$</span>
+                <span id="amountDisplay" class="amount-display">50</span>
+              </div>
+
+              <div id="amountPad" class="amount-pad" role="group" aria-label="Amount keypad">
+                <button type="button" class="amount-key" data-pad-value="1">1</button>
+                <button type="button" class="amount-key" data-pad-value="2">2</button>
+                <button type="button" class="amount-key" data-pad-value="3">3</button>
+                <button type="button" class="amount-key" data-pad-value="4">4</button>
+                <button type="button" class="amount-key" data-pad-value="5">5</button>
+                <button type="button" class="amount-key" data-pad-value="6">6</button>
+                <button type="button" class="amount-key" data-pad-value="7">7</button>
+                <button type="button" class="amount-key" data-pad-value="8">8</button>
+                <button type="button" class="amount-key" data-pad-value="9">9</button>
+                <button type="button" class="amount-key action" data-pad-value=".">.</button>
+                <button type="button" class="amount-key" data-pad-value="0">0</button>
+                <button type="button" class="amount-key action" data-pad-action="backspace" aria-label="Delete last digit">⌫</button>
+              </div>
             </div>
             <p id="amountError" class="error-message" data-i18n="amountError">Enter a valid amount between $1 and $10,000.</p>
           </div>
@@ -216,6 +222,10 @@
           <div id="sq-google-pay"></div>
           <div id="sq-cash-app-pay"></div>
         </div>
+
+        <p class="wallet-guide" data-i18n="walletGuide">
+          Apple Pay appears only on supported Safari devices on your live HTTPS site. Google Pay and Cash App appear when available.
+        </p>
 
         <div class="sq-or" id="sqOr"><span>or pay by card</span></div>
 

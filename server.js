@@ -8,6 +8,9 @@ const app = express();
 const SQUARE_API_VERSION = '2025-01-23';
 
 app.use(express.json());
+app.use('/.well-known', express.static(path.join(__dirname, '.well-known'), {
+  dotfiles: 'allow'
+}));
 app.use(express.static(path.join(__dirname)));
 
 app.get('/api/config', (req, res) => {
