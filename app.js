@@ -6,12 +6,12 @@
   const translations = {
     en: {
       churchName: 'Hope of Life International Church',
-      heroCopy: 'Support our ministry through tithes, offerings, missions, and the building fund.',
+      heroCopy: 'Support the work of Hope of Life through tithes, offerings, missions, and the building fund.',
       scripture: "Rejoice always, pray continually, give thanks in all circumstances; for this is God's will for you in Christ Jesus.",
       scriptureRef: '1 Thessalonians 5:16-18',
       cardKicker: 'Online Giving',
       cardTitle: 'Choose your gift',
-      cardCopy: 'Fast, secure giving in a simple flow.',
+      cardCopy: 'Give securely in just a few steps.',
       amountLabel: 'Amount',
       amountHelp: 'Minimum $1.00',
       amountError: 'Enter a valid amount between $1 and $10,000.',
@@ -31,13 +31,18 @@
       namePlaceholder: 'Full name',
       nameError: 'Please enter your name.',
       emailLabel: 'Email',
-      emailOptional: 'if you want to recieve reciept',
+      emailOptional: 'optional, for your receipt',
       emailPlaceholder: 'you@example.com',
       emailError: 'Enter a valid email address.',
       summaryLabel: 'Gift summary',
       summaryPending: 'Choose an amount',
       continueLabel: 'Continue with',
-      finePrint: 'Secure and encrypted. A receipt can be sent to your email.',
+      finePrint: 'Your gift is processed securely, and a receipt can be sent to your email.',
+      checkoutLoading: 'Preparing secure checkout...',
+      checkoutUnavailableConfig: 'Online giving is not configured yet. Add your Square application ID, location ID, and access token on the server.',
+      checkoutUnavailableSecure: 'Secure checkout needs HTTPS. For local testing, open this site with http://localhost instead of a raw IP address.',
+      checkoutUnavailableLibrary: 'Secure checkout could not load. Refresh the page and try again.',
+      checkoutUnavailableTemporary: 'Secure checkout is temporarily unavailable. Please try again in a moment.',
       paymentEyebrow: 'Secure checkout',
       paymentTitle: 'Secure Payment',
       sheetFund: 'Fund',
@@ -61,7 +66,7 @@
       processing: 'Processing...',
       successKicker: 'Gift received',
       successTitle: 'Thank you!',
-      successCopy: 'Your gift has been received. God bless you.',
+      successCopy: 'Your gift has been received. Thank you for supporting the ministry.',
       successAction: 'Make another gift',
       footerLead: 'Hope of Life International Church',
       cardPreviewNameDefault: 'Your Name'
@@ -222,7 +227,11 @@
     lang: initialLang,
     fund: 'offering',
     amount: 50,
-    activeTab: 'card'
+    activeTab: 'card',
+    paymentStatus: 'loading',
+    paymentMessageKey: 'checkoutLoading',
+    squareApplicationId: '',
+    squareLocationId: ''
   };
 
   const ui = {
@@ -239,6 +248,7 @@
   const summaryText = document.getElementById('summaryText');
   const openSheetBtn = document.getElementById('openSheetBtn');
   const openSheetLabel = document.getElementById('openSheetLabel');
+  const checkoutNotice = document.getElementById('checkoutNotice');
   const donationForm = document.getElementById('donationForm');
   const langSelect = document.getElementById('langSelect');
   const paySheet = document.getElementById('paySheet');
@@ -272,6 +282,14 @@
 
   function getFundLabel(key) {
     return t(key);
+  }
+
+  function getPaymentMessage() {
+    return state.paymentMessageKey ? t(state.paymentMessageKey) : '';
+  }
+
+  function isPaymentReady() {
+    return state.paymentStatus === 'ready';
   }
 
   function isEmailValid(value) {
@@ -314,6 +332,31 @@
     updateMainState();
   }
 
+  function setPaymentState(status, messageKey) {
+    state.paymentStatus = status;
+    state.paymentMessageKey = messageKey || '';
+    updateMainState();
+  }
+
+  function renderPaymentState() {
+    const paymentMessage = isPaymentReady() ? '' : getPaymentMessage();
+
+    checkoutNotice.textContent = paymentMessage;
+    checkoutNotice.classList.toggle('visible', Boolean(paymentMessage));
+    checkoutNotice.classList.toggle('is-error', state.paymentStatus === 'unavailable');
+
+    confirmPayBtn.disabled = !isPaymentReady();
+
+    if (!paySheet.classList.contains('hidden')) {
+      if (paymentMessage) {
+        paymentError.textContent = paymentMessage;
+        paymentError.classList.add('visible');
+      } else {
+        paymentError.classList.remove('visible');
+      }
+    }
+  }
+
   function updateMainState(showErrors) {
     if (showErrors) {
       ui.mainSubmitted = true;
@@ -332,14 +375,16 @@
 
     const amountLabel = amountValid ? formatCurrency(parsedAmount) : t('summaryPending');
     const fundLabel = getFundLabel(state.fund);
+    const formValid = amountValid && nameValid && emailValid;
 
     summaryText.textContent = amountLabel + ' / ' + fundLabel;
     openSheetLabel.textContent = t('continueLabel') + ' ' + (amountValid ? formatCurrency(parsedAmount) : '--');
 
-    openSheetBtn.disabled = !(amountValid && nameValid && emailValid);
+    openSheetBtn.disabled = !(formValid && isPaymentReady());
     syncSheetSummary();
+    renderPaymentState();
 
-    return amountValid && nameValid && emailValid;
+    return formValid;
   }
 
   function syncSheetSummary() {
@@ -361,41 +406,69 @@
     updateMainState();
   }
 
-  const SQUARE_APP_ID      = 'sq0idp-WzfaWH2IYbzq-mUNSYP8jA';
-  const SQUARE_LOCATION_ID = 'KGVW2WRARTYFE';
-
   let sqPayments = null;
   let sqCard     = null;
   let sqPayReq   = null;
 
+  async function loadPaymentConfig() {
+    try {
+      const response = await fetch('/api/config', { cache: 'no-store' });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to load payment config');
+      }
+
+      state.squareApplicationId = data.squareApplicationId || '';
+      state.squareLocationId = data.squareLocationId || '';
+
+      if (!data.paymentsEnabled || !state.squareApplicationId || !state.squareLocationId) {
+        setPaymentState('unavailable', 'checkoutUnavailableConfig');
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Payment config failed:', error);
+      setPaymentState('unavailable', 'checkoutUnavailableTemporary');
+      return false;
+    }
+  }
+
+  function isSupportedSquareContext() {
+    const hostname = window.location.hostname;
+
+    return window.location.protocol === 'https:' || hostname === 'localhost' || hostname === '[::1]';
+  }
+
+  function getSquareInitMessage(error) {
+    const message = error && error.message ? error.message : '';
+
+    if (/secure context/i.test(message)) {
+      return 'checkoutUnavailableSecure';
+    }
+
+    return 'checkoutUnavailableTemporary';
+  }
+
   async function initSquare() {
     if (!window.Square) {
       console.warn('Square.js not loaded');
+      setPaymentState('unavailable', 'checkoutUnavailableLibrary');
       return;
     }
-    try {
-      sqPayments = Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);
 
-      sqCard = await sqPayments.card({
-        style: {
-          '.input-wrapper': {
-            borderRadius: '14px',
-            border: '1px solid rgba(0,0,0,0.1)',
-            outline: 'none'
-          },
-          '.input-wrapper.is-focus': {
-            borderColor: '#bf0a0a',
-            boxShadow: '0 0 0 3px rgba(191,10,10,0.12)'
-          },
-          'input': {
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif',
-            fontSize: '15px',
-            color: '#1d1d1f'
-          },
-          '::placeholder': { color: '#86868b' }
-        }
-      });
+    if (!isSupportedSquareContext()) {
+      setPaymentState('unavailable', 'checkoutUnavailableSecure');
+      return;
+    }
+
+    try {
+      sqPayments = Square.payments(state.squareApplicationId, state.squareLocationId);
+
+      sqCard = await sqPayments.card();
       await sqCard.attach('#sq-card');
+      setPaymentState('ready');
 
       sqPayReq = sqPayments.paymentRequest({
         countryCode: 'US',
@@ -403,32 +476,46 @@
         total: { amount: state.amount.toFixed(2), label: 'Hope of Life International Church' }
       });
 
-      try {
-        const ap = await sqPayments.applePay(sqPayReq);
-        ap.addEventListener('tokenize', (e) => handleWalletToken(e));
-        await ap.attach('#sq-apple-pay');
-        showWalletDivider();
-      } catch (_) { document.getElementById('sq-apple-pay').style.display = 'none'; }
-
-      try {
-        const gp = await sqPayments.googlePay(sqPayReq);
-        gp.addEventListener('tokenize', (e) => handleWalletToken(e));
-        await gp.attach('#sq-google-pay');
-        showWalletDivider();
-      } catch (_) { document.getElementById('sq-google-pay').style.display = 'none'; }
-
-      try {
-        const ca = await sqPayments.cashAppPay(sqPayReq, {
-          redirectURL: window.location.href,
-          referenceId: 'holi-' + Date.now()
-        });
-        ca.addEventListener('tokenize', (e) => handleWalletToken(e));
-        await ca.attach('#sq-cash-app-pay');
-        showWalletDivider();
-      } catch (_) { document.getElementById('sq-cash-app-pay').style.display = 'none'; }
-
+      void initWallets();
     } catch (err) {
       console.error('Square init failed:', err);
+      setPaymentState('unavailable', getSquareInitMessage(err));
+    }
+  }
+
+  async function initWallets() {
+    if (!sqPayments || !sqPayReq) {
+      return;
+    }
+
+    try {
+      const ap = await sqPayments.applePay(sqPayReq);
+      ap.addEventListener('tokenize', (e) => handleWalletToken(e));
+      await ap.attach('#sq-apple-pay');
+      showWalletDivider();
+    } catch (_) {
+      document.getElementById('sq-apple-pay').style.display = 'none';
+    }
+
+    try {
+      const gp = await sqPayments.googlePay(sqPayReq);
+      gp.addEventListener('tokenize', (e) => handleWalletToken(e));
+      await gp.attach('#sq-google-pay');
+      showWalletDivider();
+    } catch (_) {
+      document.getElementById('sq-google-pay').style.display = 'none';
+    }
+
+    try {
+      const ca = await sqPayments.cashAppPay(sqPayReq, {
+        redirectURL: window.location.href,
+        referenceId: 'holi-' + Date.now()
+      });
+      ca.addEventListener('tokenize', (e) => handleWalletToken(e));
+      await ca.attach('#sq-cash-app-pay');
+      showWalletDivider();
+    } catch (_) {
+      document.getElementById('sq-cash-app-pay').style.display = 'none';
     }
   }
 
@@ -461,7 +548,11 @@
         })
       });
 
-      if (!res.ok) throw new Error('Payment declined');
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Payment failed. Please try again.');
+      }
 
       closeSheet({ restoreFocus: false });
       openSuccess();
@@ -476,6 +567,11 @@
   }
 
   function openSheet() {
+    if (!isPaymentReady()) {
+      renderPaymentState();
+      return;
+    }
+
     lastFocusedElement = document.activeElement;
     syncSheetSummary();
 
@@ -523,7 +619,12 @@
   }
 
   async function handlePaymentSubmit() {
-    if (!sqCard) return;
+    if (!isPaymentReady() || !sqCard) {
+      paymentError.textContent = getPaymentMessage() || t('checkoutUnavailableTemporary');
+      paymentError.classList.add('visible');
+      return;
+    }
+
     paymentError.classList.remove('visible');
     const result = await sqCard.tokenize();
     if (result.status !== 'OK') {
@@ -637,10 +738,15 @@
 
   window.addEventListener('load', () => {
     document.body.classList.add('loaded');
-    initSquare();
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
+
+    loadPaymentConfig().then((hasConfig) => {
+      if (hasConfig) {
+        initSquare();
+      }
+    });
   });
 })();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'holi-give-v1';
+const CACHE_NAME = 'holi-give-v2';
 
 const STATIC_ASSETS = [
   '/',
@@ -36,6 +36,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

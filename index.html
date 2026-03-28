@@ -38,7 +38,7 @@
       <select id="langSelect" class="lang-select" aria-label="Language">
         <option value="en" selected>English</option>
         <option value="rw">Kinyarwanda</option>
-        <option value="fr">Francais</option>
+        <option value="fr">Français</option>
       </select>
     </header>
 
@@ -47,7 +47,7 @@
         Hope of Life International Church
       </h1>
       <p class="hero-copy fade-up" style="--delay: 200ms" data-i18n="heroCopy">
-        Support our ministry through tithes, offerings, missions, and the building fund.
+        Support the work of Hope of Life through tithes, offerings, missions, and the building fund.
       </p>
 
       <blockquote class="scripture-card fade-up" style="--delay: 260ms">
@@ -62,7 +62,7 @@
         <div class="card-copy">
           <p class="card-kicker" data-i18n="cardKicker">Online Giving</p>
           <h2 data-i18n="cardTitle">Choose your gift</h2>
-          <p data-i18n="cardCopy">Fast, secure giving in a simple flow.</p>
+          <p data-i18n="cardCopy">Give securely in just a few steps.</p>
         </div>
 
         <form id="donationForm" novalidate>
@@ -144,7 +144,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" for="emailInput">Email <span class="label-optional" data-i18n="emailOptional">if you want to recieve reciept</span></label>
+                <label class="input-label" for="emailInput">Email <span class="label-optional" data-i18n="emailOptional">optional, for your receipt</span></label>
                 <input
                   id="emailInput"
                   class="text-input"
@@ -173,7 +173,8 @@
             </svg>
           </button>
 
-          <p class="fine-print" data-i18n="finePrint">Secure and encrypted. A receipt can be sent to your email.</p>
+          <p id="checkoutNotice" class="payment-notice" aria-live="polite"></p>
+          <p class="fine-print" data-i18n="finePrint">Your gift is processed securely, and a receipt can be sent to your email.</p>
         </form>
       </div>
     </section>
@@ -203,7 +204,7 @@
           <span data-i18n="sheetFund">Fund</span>
           <strong id="sheetFundValue">Offering</strong>
         </div>
-<div class="row total">
+        <div class="row total">
           <span data-i18n="sheetTotal">Total</span>
           <strong id="sheetTotalValue">$50</strong>
         </div>
@@ -240,7 +241,7 @@
       <h2 id="successTitle" data-i18n="successTitle">Thank you!</h2>
       <p id="successAmount" class="success-amount">$50</p>
       <p id="successDetails" class="success-details">Offering</p>
-      <p class="success-copy" data-i18n="successCopy">Your gift has been received. God bless you.</p>
+      <p class="success-copy" data-i18n="successCopy">Your gift has been received. Thank you for supporting the ministry.</p>
       <button id="successClose" class="btn-primary" type="button" data-i18n="successAction">Make another gift</button>
     </div>
   </div>

@@ -629,6 +629,26 @@ body.loaded .fade-up {
   display: block;
 }
 
+.payment-notice {
+  display: none;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.payment-notice.visible {
+  display: block;
+}
+
+.payment-notice.is-error {
+  background: rgba(191, 10, 10, 0.08);
+  color: var(--brand-deep);
+}
+
 /* ── Footer ── */
 
 .page-footer {
